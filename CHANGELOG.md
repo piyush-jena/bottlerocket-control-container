@@ -1,3 +1,7 @@
+# 0.7.11
+
+* Rebuilt to get the latest AL2 updates.
+
 # 0.7.10
 
 * Update SSM agent to 3.3.131.0 ([#58])
