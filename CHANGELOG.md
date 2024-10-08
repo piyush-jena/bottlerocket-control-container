@@ -1,3 +1,9 @@
+# 0.7.17
+
+* Update SSM agent to 3.3.987.0 ([#66])
+
+[#66]: https://github.com/bottlerocket-os/bottlerocket-control-container/pull/66
+
 # 0.7.16
 
 * Rebuilt to get the latest AL2 updates.
