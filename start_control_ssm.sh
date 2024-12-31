@@ -6,9 +6,19 @@ declare -r PERSISTENT_STORAGE_BASE_DIR="/.bottlerocket/host-containers/current"
 declare -r USER_DATA="${PERSISTENT_STORAGE_BASE_DIR}/user-data"
 declare -r SSM_AGENT_PERSISTENT_STATE_DIR="${PERSISTENT_STORAGE_BASE_DIR}/ssm"
 declare -r SSM_AGENT_LOCAL_STATE_DIR="/var/lib/amazon/ssm"
+declare -r HOST_CERTS="/.bottlerocket/certs"
 
 log() {
   echo "$*" >&2
+}
+
+# Link host certs if present into container & run update-ca-trust
+link_host_certs() {
+  for cert in $(ls -1 "${HOST_CERTS}"); do
+    ln -s "${HOST_CERTS}/${cert}" "/etc/pki/ca-trust/source/anchors/${cert}"
+  done
+  # Update the CA trust to pickup the new certificates
+  update-ca-trust
 }
 
 enable_hybrid_env_ssm() {
@@ -54,6 +64,8 @@ fetch_from_json() {
 # and the symlinked /var/lib/amazon/ssm/registration file is not populated,
 # then check to see if the user-data file contains ssm at the top-level. If so,
 # attempt to manually register with SSM with a hybrid activation.
+
+[[ -d "${HOST_CERTS}" ]] && link_host_certs
 
 mkdir -p "${SSM_AGENT_PERSISTENT_STATE_DIR}"
 chmod 750 "${SSM_AGENT_PERSISTENT_STATE_DIR}"
